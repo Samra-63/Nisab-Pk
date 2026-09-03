@@ -6,3 +6,13 @@ passlib
 bcrypt==4.0.1
 python-jose[cryptography]
 python-multipart
+
+# --- Nisab PK Textbook RAG (Zero C++ Compilers Required) ---
+google-generativeai==0.4.1
+pypdf==4.1.0
+numpy
+scikit-learn
+python-dotenv==1.0.1
+
+pypdfium2
+pillow
