@@ -6,16 +6,13 @@ import 'core/theme/app_colors.dart';
 import 'features/auth/presentation/splash_screen.dart';
 import 'features/dashboard/presentation/dashboard_screen.dart';
 import 'features/past_papers/presentation/year_repository_screen.dart';
+import 'features/doc_ai/presentation/doc_chat_screen.dart';
 import 'features/analytics/presentation/analytics_dashboard_screen.dart';
 import 'features/profile/presentation/profile_screen.dart';
-// Agar flutterfire configure run kar chuki hain to is file ko uncomment kar sakti hain:
-// import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   try {
-    // Agar firebase_options.dart generate ho chuki hai:
-    // await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
     await Firebase.initializeApp();
   } catch (e) {
     debugPrint("Firebase init note: $e");
@@ -53,15 +50,12 @@ class AuthGate extends StatelessWidget {
     return StreamBuilder<User?>(
       stream: FirebaseAuth.instance.authStateChanges(),
       builder: (context, snapshot) {
-        // Jab user state verify ho rahi ho ya pehli dafa app khul rahi ho
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const SplashScreen();
         }
-        // Agar user logged in hai to direct Dashboard Shell
         if (snapshot.hasData) {
           return const MainNavigationShell();
         }
-        // Agar user logged in nahi hai to Splash Screen -> Login
         return const SplashScreen();
       },
     );
@@ -78,9 +72,11 @@ class MainNavigationShell extends StatefulWidget {
 class _MainNavigationShellState extends State<MainNavigationShell> {
   int _currentIndex = 0;
 
+  // 5 screens: Home, Past Papers, AI Tutor (Center), Analytics, Profile
   final List<Widget> _screens = const [
     DashboardScreen(),
     YearRepositoryScreen(),
+    DocChatScreen(),
     AnalyticsDashboardScreen(),
     ProfileScreen(),
   ];
@@ -89,61 +85,65 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
+      extendBody: true,
       body: IndexedStack(index: _currentIndex, children: _screens),
-      bottomNavigationBar: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-        decoration: const BoxDecoration(
-          color: AppColors.surface,
-          border: Border(
-            top: BorderSide(color: AppColors.surfaceBorder, width: 1),
-          ),
-        ),
-        child: SafeArea(
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              _buildNavButton(0, LucideIcons.layoutGrid, 'Dashboard'),
-              _buildNavButton(1, LucideIcons.archive, 'Repository'),
-              _buildNavButton(2, LucideIcons.trendingUp, 'Analytics'),
-              _buildNavButton(3, LucideIcons.user, 'Profile'),
-            ],
+      bottomNavigationBar: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.only(left: 24, right: 24, bottom: 20),
+          child: Container(
+            height: 62,
+            decoration: BoxDecoration(
+              color: AppColors.primary,
+              borderRadius: BorderRadius.circular(36),
+              boxShadow: [
+                BoxShadow(
+                  color: AppColors.primaryDark.withOpacity(0.28),
+                  blurRadius: 20,
+                  offset: const Offset(0, 8),
+                ),
+              ],
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                _buildFigmaDockButton(0, LucideIcons.home),
+                _buildFigmaDockButton(1, LucideIcons.layoutGrid),
+                _buildFigmaDockButton(
+                  2,
+                  LucideIcons.bot,
+                ), // Center AI Tutor Tab
+                _buildFigmaDockButton(3, LucideIcons.barChart2),
+                _buildFigmaDockButton(4, LucideIcons.user),
+              ],
+            ),
           ),
         ),
       ),
     );
   }
 
-  Widget _buildNavButton(int index, IconData icon, String label) {
+  Widget _buildFigmaDockButton(int index, IconData icon) {
     final bool isSelected = _currentIndex == index;
     return GestureDetector(
       onTap: () => setState(() => _currentIndex = index),
       behavior: HitTestBehavior.opaque,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 180),
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+        curve: Curves.easeInOut,
+        width: 44,
+        height: 44,
         decoration: BoxDecoration(
-          color: isSelected ? AppColors.primarySubtle : Colors.transparent,
-          borderRadius: BorderRadius.circular(12),
+          color: isSelected
+              ? Colors.white.withOpacity(0.20)
+              : Colors.transparent,
+          shape: BoxShape.circle,
         ),
-        child: Row(
-          children: [
-            Icon(
-              icon,
-              size: 19,
-              color: isSelected ? AppColors.primary : AppColors.textMuted,
-            ),
-            if (isSelected) ...[
-              const SizedBox(width: 6),
-              Text(
-                label,
-                style: const TextStyle(
-                  fontSize: 12.5,
-                  fontWeight: FontWeight.w700,
-                  color: AppColors.primary,
-                ),
-              ),
-            ],
-          ],
+        child: Center(
+          child: Icon(
+            icon,
+            size: 21,
+            color: isSelected ? Colors.white : Colors.white.withOpacity(0.55),
+          ),
         ),
       ),
     );
