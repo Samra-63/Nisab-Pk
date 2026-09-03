@@ -1,0 +1,8 @@
+﻿fastapi
+uvicorn
+sqlalchemy
+pydantic
+passlib
+bcrypt==4.0.1
+python-jose[cryptography]
+python-multipart

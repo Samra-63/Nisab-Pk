@@ -1,0 +1,56 @@
+﻿# ==========================================
+# SENSITIVE / SECRETS (NEVER PUSH)
+# ==========================================
+*.env
+*.env.*
+*.pem
+*.key
+*.jks
+*.keystore
+
+# Firebase & Cloud Credentials
+**/google-services.json
+**/GoogleService-Info.plist
+**/firebase_options.dart
+**/serviceAccountKey.json
+
+# Local Databases & Secrets
+*.db
+*.sqlite
+*.sqlite3
+
+# ==========================================
+# BACKEND (Python / FastAPI / VirtualEnv)
+# ==========================================
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+venv/
+env/
+ENV/
+.venv/
+
+# ==========================================
+# FRONTEND (Flutter / Dart / Android)
+# ==========================================
+**/frontend/.dart_tool/
+**/frontend/.flutter-plugins
+**/frontend/.flutter-plugins-dependencies
+**/frontend/.packages
+**/frontend/build/
+**/frontend/.pub-cache/
+**/frontend/.pub/
+
+# Android Specific
+**/frontend/android/.gradle/
+**/frontend/android/local.properties
+**/frontend/android/**/build/
+**/frontend/android/app/build/
+
+# IDE & OS Files
+.idea/
+.vscode/
+*.swp
+.DS_Store
+Thumbs.db
